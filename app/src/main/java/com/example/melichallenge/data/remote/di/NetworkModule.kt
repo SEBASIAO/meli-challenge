@@ -1,5 +1,6 @@
-package com.example.melichallenge.data.di
+package com.example.melichallenge.data.remote.di
 
+import com.example.melichallenge.data.remote.services.SearchApiServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,5 +41,11 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchApiServices(retrofit: Retrofit): SearchApiServices {
+        return retrofit.create(SearchApiServices::class.java)
     }
 }
