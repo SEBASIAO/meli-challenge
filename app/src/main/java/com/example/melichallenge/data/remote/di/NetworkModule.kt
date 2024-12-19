@@ -1,6 +1,9 @@
 package com.example.melichallenge.data.remote.di
 
+import com.example.melichallenge.data.remote.datasource.SearchRemoteDataSource
 import com.example.melichallenge.data.remote.services.SearchApiServices
+import com.example.melichallenge.data.repository.SearchRepositoryImpl
+import com.example.melichallenge.domain.repository.SearchRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,4 +51,14 @@ object NetworkModule {
     fun provideSearchApiServices(retrofit: Retrofit): SearchApiServices {
         return retrofit.create(SearchApiServices::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideSearchRemoteDataSource(services: SearchApiServices): SearchRemoteDataSource =
+        SearchRemoteDataSource(services)
+
+    @Provides
+    @Singleton
+    fun provideSearchRepository(remoteDataSource: SearchRemoteDataSource): SearchRepository =
+        SearchRepositoryImpl(remoteDataSource)
 }

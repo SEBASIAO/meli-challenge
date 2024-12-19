@@ -2,7 +2,7 @@ package com.example.melichallenge.data.remote.models
 
 import com.google.gson.annotations.SerializedName
 
-data class ItemModelDTO(
+data class ItemApiModel(
     @SerializedName("id") var id: String? = null,
     @SerializedName("title") var title: String? = null,
     @SerializedName("condition") var condition: String? = null,
@@ -21,16 +21,16 @@ data class ItemModelDTO(
     @SerializedName("order_backend") var orderBackend: Int? = null,
     @SerializedName("price") var price: Int? = null,
     @SerializedName("original_price") var originalPrice: String? = null,
-    @SerializedName("sale_price") var salePrice: SalePriceDTO? = null,
+    @SerializedName("sale_price") var salePrice: SalePriceApiModel? = null,
     @SerializedName("available_quantity") var availableQuantity: Int? = null,
     @SerializedName("official_store_id") var officialStoreId: String? = null,
     @SerializedName("use_thumbnail_id") var useThumbnailId: Boolean? = null,
     @SerializedName("accepts_mercadopago") var acceptsMercadopago: Boolean? = null,
     @SerializedName("variation_filters") var variationFilters: ArrayList<String>? = null,
-    @SerializedName("shipping") var shipping: ShippingDTO? = null,
+    @SerializedName("shipping") var shipping: ShippingApiModel? = null,
     @SerializedName("stop_time") var stopTime: String? = null,
-    @SerializedName("seller") var seller: SellerDTO? = null,
-    @SerializedName("address") var address: AddressDTO? = null,
+    @SerializedName("seller") var seller: SellerApiModel? = null,
+    @SerializedName("address") var address: AddressApiModel? = null,
     @SerializedName("winner_item_id") var winnerItemId: String? = null,
     @SerializedName("catalog_listing") var catalogListing: Boolean? = null,
     @SerializedName("discounts") var discounts: String? = null,
@@ -39,24 +39,24 @@ data class ItemModelDTO(
     @SerializedName("inventory_id") var inventoryId: String? = null
 )
 
-data class SalePriceDTO(
+data class SalePriceApiModel(
     @SerializedName("price_id") var priceId: String? = null,
     @SerializedName("amount") var amount: Int? = null,
     @SerializedName("currency_id") var currencyId: String? = null,
     @SerializedName("exchange_rate") var exchangeRate: String? = null,
 )
 
-data class ShippingDTO(
+data class ShippingApiModel(
     @SerializedName("store_pick_up") var storePickUp: Boolean? = null,
     @SerializedName("free_shipping") var freeShipping: Boolean? = null,
 )
 
-data class SellerDTO(
+data class SellerApiModel(
     @SerializedName("id") var id: Int? = null,
     @SerializedName("nickname") var nickname: String? = null
 )
 
-data class AddressDTO(
+data class AddressApiModel(
     @SerializedName("state_id") var stateId: String? = null,
     @SerializedName("state_name") var stateName: String? = null,
     @SerializedName("city_id") var cityId: String? = null,
