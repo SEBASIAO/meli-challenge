@@ -35,6 +35,15 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        dataBinding = true
+    }
+    dataBinding{
+        enable = true
+    }
+    viewBinding{
+        enable = true
+    }
 }
 
 dependencies {
@@ -44,6 +53,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.lifecycle.viewmodel.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,6 +66,10 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.okhttp3.logging.interceptor)
+
+    //Glide
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
 }
 
 kapt{

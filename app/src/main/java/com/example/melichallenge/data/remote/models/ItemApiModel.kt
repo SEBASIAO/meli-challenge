@@ -19,7 +19,7 @@ data class ItemApiModel(
     @SerializedName("thumbnail") var thumbnail: String? = null,
     @SerializedName("currency_id") var currencyId: String? = null,
     @SerializedName("order_backend") var orderBackend: Int? = null,
-    @SerializedName("price") var price: Int? = null,
+    @SerializedName("price") var price: Double? = null,
     @SerializedName("original_price") var originalPrice: String? = null,
     @SerializedName("sale_price") var salePrice: SalePriceApiModel? = null,
     @SerializedName("available_quantity") var availableQuantity: Int? = null,
@@ -41,7 +41,7 @@ data class ItemApiModel(
 
 data class SalePriceApiModel(
     @SerializedName("price_id") var priceId: String? = null,
-    @SerializedName("amount") var amount: Int? = null,
+    @SerializedName("amount") var amount: Double? = null,
     @SerializedName("currency_id") var currencyId: String? = null,
     @SerializedName("exchange_rate") var exchangeRate: String? = null,
 )

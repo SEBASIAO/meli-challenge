@@ -21,6 +21,7 @@ fun ItemApiModel.toBo() = Item(
     address = this.address.toBo(),
     shipping = this.shipping.toBo(),
     salePrice = this.salePrice.toBo(),
+    thumbnail = this.thumbnail
 )
 
 fun SellerApiModel?.toBo() = Seller(

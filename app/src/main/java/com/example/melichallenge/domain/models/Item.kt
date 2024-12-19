@@ -1,20 +1,26 @@
 package com.example.melichallenge.domain.models
 
+
+data class ItemList(
+    val items : List<Item>,
+    val total : Int? = null,
+)
 data class Item(
     val id: String? = null,
     val title: String? = null,
-    val price: Int? = null,
+    val price: Double? = null,
     val originalPrice: String? = null,
     val condition: String? = null,
     val seller: Seller? = null,
     val address: Address? = null,
     val shipping: Shipping? = null,
     val salePrice: SalePrice? = null,
+    val thumbnail : String? = null,
 )
 
 data class SalePrice(
      val priceId: String? = null,
-     val amount: Int? = null,
+     val amount: Double? = null,
      val currencyId: String? = null,
      val exchangeRate: String? = null,
 )

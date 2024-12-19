@@ -6,8 +6,10 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface SearchApiServices {
-    @GET("/search")
+    @GET("sites/MLA/search")
     suspend fun searchItemsByQuery(
         @Query("q") query: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
     ): Response<SearchItemsApiModel>
 }
