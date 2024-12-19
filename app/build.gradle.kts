@@ -51,6 +51,11 @@ dependencies {
     //Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp3.logging.interceptor)
 }
 
 kapt{
