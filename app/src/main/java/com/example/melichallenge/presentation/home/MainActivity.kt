@@ -1,5 +1,6 @@
-package com.example.melichallenge.presentation
+package com.example.melichallenge.presentation.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melichallenge.databinding.ActivityMainBinding
 import com.example.melichallenge.presentation.adapters.ItemAdapter
 import com.example.melichallenge.presentation.adapters.PaginationScrollListener
+import com.example.melichallenge.presentation.details.DetailsActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -65,7 +67,9 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.navigationEvent.observe(this) { event ->
             event.getContentIfNotHandled()?.let { itemDetails ->
-                Log.i("MainActivity", "Navigation event to details: $itemDetails")
+                val intent = Intent(this, DetailsActivity::class.java)
+                intent.putExtra("item", itemDetails)
+                startActivity(intent)
             }
         }
     }

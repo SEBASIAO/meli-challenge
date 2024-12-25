@@ -1,6 +1,5 @@
-package com.example.melichallenge.presentation
+package com.example.melichallenge.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
