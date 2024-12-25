@@ -66,14 +66,14 @@ class MainViewModel @Inject constructor(private val repository: SearchRepository
         }
     }
 
-    fun getItemDetails(id: String) {
+    fun getItemDetails(item: Item) {
         _uiState.value = MainActivityUiState.Loading
         viewModelScope.launch {
-            val result = repository.getItemDetails(id)
+            val result = repository.getItemDetails(item.id.orEmpty())
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     result.data?.let {
-                        _navigationEvent.postValue(MainActivityEvent(it))
+                        _navigationEvent.postValue(MainActivityEvent(item.copy(pictures = it.pictures)))
                     } ?: run {
                         _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty()))
                     }

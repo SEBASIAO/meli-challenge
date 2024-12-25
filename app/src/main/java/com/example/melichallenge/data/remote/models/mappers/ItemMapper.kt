@@ -12,11 +12,12 @@ import com.example.melichallenge.domain.models.PictureModel
 import com.example.melichallenge.domain.models.SalePrice
 import com.example.melichallenge.domain.models.Seller
 import com.example.melichallenge.domain.models.Shipping
+import com.example.melichallenge.presentation.formatPrice
 
 fun ItemApiModel.toBo() = Item(
     id = this.id,
     title = this.title,
-    price = this.price,
+    price = this.price?.formatPrice(),
     originalPrice = this.originalPrice,
     condition = this.condition,
     seller = this.seller.toBo(),

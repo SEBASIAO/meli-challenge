@@ -8,7 +8,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface SearchApiServices {
-    @GET("sites/MLA/search")
+    @GET("sites/MCO/search")
     suspend fun searchItemsByQuery(
         @Query("q") query: String,
         @Query("limit") limit: Int,

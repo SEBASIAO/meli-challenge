@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpItemsRecyclerView() {
         val adapter = ItemAdapter { itemClicked ->
-            viewModel.getItemDetails(itemClicked.id.orEmpty())
+            viewModel.getItemDetails(itemClicked)
         }
         val layoutManager = LinearLayoutManager(this)
         binding.searchRv.adapter = adapter

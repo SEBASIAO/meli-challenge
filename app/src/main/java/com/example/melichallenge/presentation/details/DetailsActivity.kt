@@ -14,7 +14,7 @@ class DetailsActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.lifecycleOwner = this
 
-        val item = intent.getParcelableExtra("item", Item::class.java)
+        val item = intent.getParcelableExtra<Item>("item")
 
         item?.let {
             binding.item = item

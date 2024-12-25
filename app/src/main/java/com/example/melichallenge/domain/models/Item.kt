@@ -12,7 +12,7 @@ data class ItemList(
 data class Item(
     val id: String? = null,
     val title: String? = null,
-    val price: Double? = null,
+    val price: String? = null,
     val originalPrice: String? = null,
     val condition: String? = null,
     val seller: Seller? = null,
