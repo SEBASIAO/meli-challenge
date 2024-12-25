@@ -7,9 +7,11 @@ import com.bumptech.glide.Glide
 import com.example.melichallenge.databinding.ItemViewBinding
 import com.example.melichallenge.domain.models.Item
 
-class ItemAdapter : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
+class ItemAdapter(private val onItemClick: (Item) -> Unit) :
+    RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     private val currentItems = mutableListOf<Item>()
+
     class ItemViewHolder(val binding: ItemViewBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -26,6 +28,7 @@ class ItemAdapter : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
         Glide.with(holder.binding.thumbnail.context)
             .load(item.thumbnail)
             .into(holder.binding.thumbnail)
+        holder.binding.root.setOnClickListener { onItemClick.invoke(item) }
     }
 
     fun appendList(newItems: List<Item>) {

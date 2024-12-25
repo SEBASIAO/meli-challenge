@@ -10,4 +10,8 @@ interface SearchRepository {
         limit: Int,
         offset: Int,
     ): Resource<ItemList>
+
+    suspend fun getItemDetails(
+        id: String,
+    ): Resource<Item>
 }

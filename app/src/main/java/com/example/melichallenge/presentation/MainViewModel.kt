@@ -14,54 +14,75 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: SearchRepository) : ViewModel() {
-    private val _items = MutableLiveData<List<Item>>()
-    val items: LiveData<List<Item>> get() = _items
+    private val _uiState = MutableLiveData<MainActivityUiState<List<Item>>>()
+    val uiState: LiveData<MainActivityUiState<List<Item>>> get() = _uiState
+
+    private val _navigationEvent = MutableLiveData<MainActivityEvent<Item>>()
+    val navigationEvent: LiveData<MainActivityEvent<Item>> get() = _navigationEvent
 
     private var currentQuery = ""
     private var currentOffset = 0
     private val limit = 11
-    private var maxOffset : Int? = null
-    var isLoading = false
+    private var maxOffset: Int? = null
     var isLastPage = false
 
 
-    fun searchItemsByQuery( query : String ) {
-        isLoading = true
+    fun searchItemsByQuery(query: String) {
+        _uiState.value = MainActivityUiState.Loading
         currentQuery = query
         viewModelScope.launch {
             val result = repository.searchItemsByQuery(query, limit, currentOffset)
-            when (result.status){
+            when (result.status) {
                 Resource.Status.SUCCESS -> {
-                    _items.postValue(result.data?.items)
+                    result.data?.items?.let { _uiState.postValue(MainActivityUiState.Success(it)) }
+                        ?: run { _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty())) }
                     maxOffset = (result.data?.total)?.div(10)
                     currentOffset = 0
-                    isLoading = false
                 }
+
                 Resource.Status.ERROR -> {
-                    Log.e("MainViewModel", "Error searching items: ${result.message}")
-                    isLoading = false
+                    _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty()))
                 }
             }
             isLastPage = false
         }
     }
 
-    fun loadMoreItems(){
+    fun loadMoreItems() {
+        _uiState.value = MainActivityUiState.Loading
         currentOffset += 1
-        isLoading = true
         viewModelScope.launch {
             val result = repository.searchItemsByQuery(currentQuery, limit, currentOffset)
-            when (result.status){
+            when (result.status) {
                 Resource.Status.SUCCESS -> {
-                    _items.postValue(result.data?.items)
-                    isLoading = false
+                    result.data?.items?.let { _uiState.postValue(MainActivityUiState.Success(it)) }
+                        ?: run { _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty())) }
                 }
+
                 Resource.Status.ERROR -> {
-                    Log.e("MainViewModel", "Error searching items: ${result.message}")
-                    isLoading = false
+                    _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty()))
                 }
             }
             isLastPage = currentOffset >= (maxOffset ?: 0)
+        }
+    }
+
+    fun getItemDetails(id: String) {
+        _uiState.value = MainActivityUiState.Loading
+        viewModelScope.launch {
+            val result = repository.getItemDetails(id)
+            when (result.status) {
+                Resource.Status.SUCCESS -> {
+                    result.data?.let {
+                        _navigationEvent.postValue(MainActivityEvent(it))
+                    } ?: run {
+                        _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty()))
+                    }
+                }
+                Resource.Status.ERROR -> {
+                    _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty()))
+                }
+            }
         }
     }
 }

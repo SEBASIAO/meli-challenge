@@ -11,4 +11,8 @@ class SearchRemoteDataSource @Inject constructor(private val services: SearchApi
         limit: Int,
         offset: Int,
     ) = getResult { services.searchItemsByQuery(query, limit, offset) }
+
+    suspend fun getItemDetails(
+        id: String,
+    ) = getResult { services.getItemDetails(id) }
 }

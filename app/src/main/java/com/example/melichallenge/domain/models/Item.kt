@@ -16,6 +16,11 @@ data class Item(
     val shipping: Shipping? = null,
     val salePrice: SalePrice? = null,
     val thumbnail : String? = null,
+    val pictures: List<PictureModel>? = null,
+    val basePrice: Double? = null,
+    val soldQuantity: Double? = null,
+    val availableQuantity: Double? = null,
+    val secureThumbnail: String? = null,
 )
 
 data class SalePrice(
@@ -40,4 +45,9 @@ data class Address(
      val stateName: String? = null,
      val cityId: String? = null,
      val cityName: String? = null
+)
+
+data class PictureModel(
+    val id: String? = null,
+    val url: String? = null
 )

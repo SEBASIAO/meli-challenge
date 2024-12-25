@@ -17,6 +17,7 @@ data class ItemApiModel(
     @SerializedName("domain_id") var domainId: String? = null,
     @SerializedName("variation_id") var variationId: String? = null,
     @SerializedName("thumbnail") var thumbnail: String? = null,
+    @SerializedName("secure_thumbnail") val secureThumbnail: String? = null,
     @SerializedName("currency_id") var currencyId: String? = null,
     @SerializedName("order_backend") var orderBackend: Int? = null,
     @SerializedName("price") var price: Double? = null,
@@ -36,7 +37,10 @@ data class ItemApiModel(
     @SerializedName("discounts") var discounts: String? = null,
     @SerializedName("promotion_decorations") var promotionDecorations: String? = null,
     @SerializedName("promotions") var promotions: String? = null,
-    @SerializedName("inventory_id") var inventoryId: String? = null
+    @SerializedName("inventory_id") var inventoryId: String? = null,
+    @SerializedName("pictures") val pictures: List<PictureApiModel>? = null,
+    @SerializedName("base_price") val basePrice: Double? = null,
+    @SerializedName("sold_quantity") val soldQuantity: Double? = null,
 )
 
 data class SalePriceApiModel(
@@ -61,4 +65,11 @@ data class AddressApiModel(
     @SerializedName("state_name") var stateName: String? = null,
     @SerializedName("city_id") var cityId: String? = null,
     @SerializedName("city_name") var cityName: String? = null
+)
+
+data class PictureApiModel(
+    @SerializedName("id")
+    val id: String? = null,
+    @SerializedName("secure_url")
+    val url: String? = null
 )
