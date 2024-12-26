@@ -3,6 +3,7 @@ package com.example.melichallenge.presentation.home
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,6 +11,7 @@ import com.example.melichallenge.databinding.ActivityMainBinding
 import com.example.melichallenge.presentation.adapters.ItemAdapter
 import com.example.melichallenge.presentation.adapters.PaginationScrollListener
 import com.example.melichallenge.presentation.details.DetailsActivity
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +27,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.lifecycleOwner = this
         setUpItemsRecyclerView()
-        viewModel.searchItemsByQuery("Iphone")
+
+        binding.searchTf.setOnEditorActionListener { textView, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val query = binding.searchTf.text.toString()
+                viewModel.searchItemsByQuery(query)
+                hideKeyboard(textView)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     private fun setUpItemsRecyclerView() {
@@ -58,8 +70,12 @@ class MainActivity : AppCompatActivity() {
                     isLoading = true
                 }
 
-                is MainActivityUiState.Success -> {
+                is MainActivityUiState.SuccessMoreItems -> {
                     adapter.appendList(state.data)
+                    isLoading = false
+                }
+                is MainActivityUiState.SuccessNewItems -> {
+                    adapter.setNewItems(state.data)
                     isLoading = false
                 }
             }
@@ -78,7 +94,9 @@ class MainActivity : AppCompatActivity() {
 sealed class MainActivityUiState<out T> {
     object Loading : MainActivityUiState<Nothing>()
 
-    data class Success<T>(val data: T) : MainActivityUiState<T>()
+    data class SuccessNewItems<T>(val data: T) : MainActivityUiState<T>()
+
+    data class SuccessMoreItems<T>(val data: T) : MainActivityUiState<T>()
 
     data class Error(val message: String) : MainActivityUiState<Nothing>()
 
@@ -96,6 +114,4 @@ class MainActivityEvent<out T>(private val content: T) {
             content
         }
     }
-
-    fun peekContent(): T = content
 }

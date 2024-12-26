@@ -36,4 +36,10 @@ class ItemAdapter(private val onItemClick: (Item) -> Unit) :
         currentItems.addAll(newItems)
         notifyItemRangeInserted(startPosition, newItems.size)
     }
+
+    fun setNewItems(newItems: List<Item>) {
+        currentItems.clear()
+        currentItems.addAll(newItems)
+        notifyDataSetChanged()
+    }
 }

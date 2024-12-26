@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(private val repository: SearchRepository
             val result = repository.searchItemsByQuery(query, limit, currentOffset)
             when (result.status) {
                 Resource.Status.SUCCESS -> {
-                    result.data?.items?.let { _uiState.postValue(MainActivityUiState.Success(it)) }
+                    result.data?.items?.let { _uiState.postValue(MainActivityUiState.SuccessNewItems(it)) }
                         ?: run { _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty())) }
                     maxOffset = (result.data?.total)?.div(10)
                     currentOffset = 0
@@ -54,7 +54,7 @@ class MainViewModel @Inject constructor(private val repository: SearchRepository
             val result = repository.searchItemsByQuery(currentQuery, limit, currentOffset)
             when (result.status) {
                 Resource.Status.SUCCESS -> {
-                    result.data?.items?.let { _uiState.postValue(MainActivityUiState.Success(it)) }
+                    result.data?.items?.let { _uiState.postValue(MainActivityUiState.SuccessMoreItems(it)) }
                         ?: run { _uiState.postValue(MainActivityUiState.Error(result.message.orEmpty())) }
                 }
 
