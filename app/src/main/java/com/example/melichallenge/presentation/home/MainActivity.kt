@@ -4,8 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melichallenge.databinding.ActivityMainBinding
 import com.example.melichallenge.presentation.adapters.ItemAdapter
@@ -19,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
-    private var isLoading = false
+    private var isLoadingMoreItems = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,33 +57,63 @@ class MainActivity : AppCompatActivity() {
 
             override fun isLastPage(): Boolean = viewModel.isLastPage
 
-            override fun isLoading(): Boolean = isLoading
+            override fun isLoading(): Boolean = isLoadingMoreItems
 
         })
 
         viewModel.uiState.observe(this) { state ->
             when (state) {
                 is MainActivityUiState.Error -> {
-                    isLoading = false
-                    Log.e("MainActivity", state.message)
-                }
-
-                MainActivityUiState.Loading -> {
-                    isLoading = true
+                    binding.progressCircular.isVisible = false
+                    binding.shimmerListContainer.root.isVisible = false
+                    isLoadingMoreItems = false
+                    adapter.hideLoading()
+                    Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
                 }
 
                 is MainActivityUiState.SuccessMoreItems -> {
                     adapter.appendList(state.data)
-                    isLoading = false
+                    binding.progressCircular.isVisible = false
+                    binding.shimmerListContainer.root.isVisible = false
+                    isLoadingMoreItems = false
+                    adapter.hideLoading()
                 }
+
                 is MainActivityUiState.SuccessNewItems -> {
                     adapter.setNewItems(state.data)
-                    isLoading = false
+                    binding.progressCircular.isVisible = false
+                    binding.shimmerListContainer.root.isVisible = false
+                    isLoadingMoreItems = false
+                    adapter.hideLoading()
+                }
+
+                MainActivityUiState.LoadingMoreItems -> {
+                    binding.progressCircular.isVisible = false
+                    binding.shimmerListContainer.root.isVisible = false
+                    isLoadingMoreItems = true
+                    adapter.showLoading()
+                }
+
+                MainActivityUiState.LoadingNewItems -> {
+                    binding.progressCircular.isVisible = false
+                    binding.shimmerListContainer.root.isVisible = true
+                    isLoadingMoreItems = false
+                    adapter.hideLoading()
+                }
+
+                MainActivityUiState.Loading -> {
+                    binding.progressCircular.isVisible = true
+                    binding.shimmerListContainer.root.isVisible = false
+                    isLoadingMoreItems = false
+                    adapter.hideLoading()
                 }
             }
         }
 
         viewModel.navigationEvent.observe(this) { event ->
+            binding.progressCircular.isVisible = false
+            binding.shimmerListContainer.root.isVisible = false
+            adapter.hideLoading()
             event.getContentIfNotHandled()?.let { itemDetails ->
                 val intent = Intent(this, DetailsActivity::class.java)
                 intent.putExtra("item", itemDetails)
@@ -93,6 +125,10 @@ class MainActivity : AppCompatActivity() {
 
 sealed class MainActivityUiState<out T> {
     object Loading : MainActivityUiState<Nothing>()
+
+    object LoadingNewItems : MainActivityUiState<Nothing>()
+
+    object LoadingMoreItems : MainActivityUiState<Nothing>()
 
     data class SuccessNewItems<T>(val data: T) : MainActivityUiState<T>()
 

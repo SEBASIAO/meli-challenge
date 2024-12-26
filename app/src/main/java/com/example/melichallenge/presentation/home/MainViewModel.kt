@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(private val repository: SearchRepository
 
 
     fun searchItemsByQuery(query: String) {
-        _uiState.value = MainActivityUiState.Loading
+        _uiState.value = MainActivityUiState.LoadingNewItems
         currentQuery = query
         viewModelScope.launch {
             val result = repository.searchItemsByQuery(query, limit, currentOffset)
@@ -48,7 +48,7 @@ class MainViewModel @Inject constructor(private val repository: SearchRepository
     }
 
     fun loadMoreItems() {
-        _uiState.value = MainActivityUiState.Loading
+        _uiState.value = MainActivityUiState.LoadingMoreItems
         currentOffset += 1
         viewModelScope.launch {
             val result = repository.searchItemsByQuery(currentQuery, limit, currentOffset)

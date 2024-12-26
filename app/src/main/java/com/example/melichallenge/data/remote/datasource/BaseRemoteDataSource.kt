@@ -2,6 +2,7 @@ package com.example.melichallenge.data.remote.datasource
 
 import android.accounts.NetworkErrorException
 import retrofit2.Response
+import java.net.UnknownHostException
 
 abstract class BaseRemoteDataSource {
 
@@ -14,7 +15,9 @@ abstract class BaseRemoteDataSource {
                 Resource.error(response.message())
             }
         } catch (e : Exception){
-            return Resource.error("Network Call Error: $e")
+            return if (e is UnknownHostException)
+                Resource.error("No internet connection")
+            else Resource.error("Network Call Error: $e")
         }
 
     }

@@ -71,6 +71,9 @@ dependencies {
     //Glide
     implementation(libs.glide)
     kapt(libs.glide.compiler)
+
+    //Shimmer
+    implementation(libs.facebook.shimmer)
 }
 
 kapt{

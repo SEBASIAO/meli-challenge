@@ -1,15 +1,96 @@
+### IntelliJ IDEA / Android Studio ###
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+.idea/
+*.ipr
+*.iws
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/assetWizardSettings.xml
+.idea/**/navEditor.xml
+.idea/**/gradle.xml
+.idea/**/libraries
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+### Gradle ###
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.log
+*.out
+*.class
+*.hprof
+*.java
+
+### Local Properties ###
 local.properties
+*.keystore
+*.jks
+*.key
+*.properties
+
+### Cache ###
+/build/
+.cache/
+captures/
+tmp/
+
+### Android Specific ###
+*.apk
+*.ap_
+*.dex
+*.class
+*.jar
+*.so
+*.swp
+*.lock
+*.metadata
+*.orig
+*.crash
+*.db
+*.sqlite
+*.bak
+*.pdb
+
+### Generated Files ###
+/gen/
+bin/
+out/
+*.log
+*.swp
+*.lock
+*.tmp
+*.temp
+*.bak
+*.orig
+*.pyc
+
+### OS Specific ###
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sln.docstates
+
+### Kotlin ###
+*.kotlin_metadata/
+*.kotlin_module/
+
+### Firebase ###
+/google-services.json
+/crashlytics-build.properties
+
+### Android Tests ###
+/output.json
+*.test_result
+
