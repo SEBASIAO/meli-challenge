@@ -1,36 +1,48 @@
 package com.example.melichallenge.presentation.home
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melichallenge.databinding.ActivityMainBinding
 import com.example.melichallenge.presentation.adapters.ItemAdapter
 import com.example.melichallenge.presentation.adapters.PaginationScrollListener
 import com.example.melichallenge.presentation.details.DetailsActivity
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
-    private var isLoadingMoreItems = false
+    private val adapter = ItemAdapter { itemClicked ->
+        viewModel.getItemDetails(itemClicked)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.lifecycleOwner = this
-        setUpItemsRecyclerView()
 
-        binding.searchTf.setOnEditorActionListener { textView, actionId, event ->
+        setUpItemsRecyclerView()
+        setUpSearchInput()
+        observeViewModel()
+    }
+
+    private fun setUpSearchInput() {
+        binding.searchTf.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val query = binding.searchTf.text.toString()
                 viewModel.searchItemsByQuery(query)
@@ -43,9 +55,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpItemsRecyclerView() {
-        val adapter = ItemAdapter { itemClicked ->
-            viewModel.getItemDetails(itemClicked)
-        }
         val layoutManager = LinearLayoutManager(this)
         binding.searchRv.adapter = adapter
         binding.searchRv.layoutManager = layoutManager
@@ -57,55 +66,67 @@ class MainActivity : AppCompatActivity() {
 
             override fun isLastPage(): Boolean = viewModel.isLastPage
 
-            override fun isLoading(): Boolean = isLoadingMoreItems
-
+            override fun isLoading(): Boolean = viewModel.isLoadingMoreItems.value
         })
 
-        viewModel.uiState.observe(this) { state ->
-            when (state) {
-                is MainActivityUiState.Error -> {
-                    binding.progressCircular.isVisible = false
-                    binding.shimmerListContainer.root.isVisible = false
-                    isLoadingMoreItems = false
-                    adapter.hideLoading()
-                    Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentItems.collect { items ->
+                    adapter.setNewItems(items)
                 }
+            }
+        }
+    }
 
-                is MainActivityUiState.SuccessMoreItems -> {
-                    adapter.appendList(state.data)
-                    binding.progressCircular.isVisible = false
-                    binding.shimmerListContainer.root.isVisible = false
-                    isLoadingMoreItems = false
-                    adapter.hideLoading()
-                }
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is MainActivityUiState.Error -> {
+                            binding.progressCircular.isVisible = false
+                            binding.shimmerListContainer.root.isVisible = false
+                            adapter.hideLoading()
+                            Toast.makeText(this@MainActivity, state.message, Toast.LENGTH_LONG)
+                                .show()
+                        }
 
-                is MainActivityUiState.SuccessNewItems -> {
-                    adapter.setNewItems(state.data)
-                    binding.progressCircular.isVisible = false
-                    binding.shimmerListContainer.root.isVisible = false
-                    isLoadingMoreItems = false
-                    adapter.hideLoading()
-                }
+                        is MainActivityUiState.SuccessMoreItems -> {
+                            binding.progressCircular.isVisible = false
+                            binding.shimmerListContainer.root.isVisible = false
+                            adapter.hideLoading()
+                        }
 
-                MainActivityUiState.LoadingMoreItems -> {
-                    binding.progressCircular.isVisible = false
-                    binding.shimmerListContainer.root.isVisible = false
-                    isLoadingMoreItems = true
-                    adapter.showLoading()
-                }
+                        is MainActivityUiState.SuccessNewItems -> {
+                            binding.progressCircular.isVisible = false
+                            binding.shimmerListContainer.root.isVisible = false
+                            adapter.hideLoading()
+                        }
 
-                MainActivityUiState.LoadingNewItems -> {
-                    binding.progressCircular.isVisible = false
-                    binding.shimmerListContainer.root.isVisible = true
-                    isLoadingMoreItems = false
-                    adapter.hideLoading()
-                }
+                        MainActivityUiState.LoadingMoreItems -> {
+                            binding.progressCircular.isVisible = false
+                            binding.shimmerListContainer.root.isVisible = false
+                            adapter.showLoading()
+                        }
 
-                MainActivityUiState.Loading -> {
-                    binding.progressCircular.isVisible = true
-                    binding.shimmerListContainer.root.isVisible = false
-                    isLoadingMoreItems = false
-                    adapter.hideLoading()
+                        MainActivityUiState.LoadingNewItems -> {
+                            binding.progressCircular.isVisible = false
+                            binding.shimmerListContainer.root.isVisible = true
+                            adapter.hideLoading()
+                        }
+
+                        MainActivityUiState.Loading -> {
+                            binding.progressCircular.isVisible = true
+                            binding.shimmerListContainer.root.isVisible = false
+                            adapter.hideLoading()
+                        }
+
+                        MainActivityUiState.Idle -> {
+                            binding.progressCircular.isVisible = false
+                            binding.shimmerListContainer.root.isVisible = false
+                            adapter.hideLoading()
+                        }
+                    }
                 }
             }
         }
@@ -121,9 +142,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun hideKeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 }
 
 sealed class MainActivityUiState<out T> {
+    object Idle : MainActivityUiState<Nothing>()
+
     object Loading : MainActivityUiState<Nothing>()
 
     object LoadingNewItems : MainActivityUiState<Nothing>()
