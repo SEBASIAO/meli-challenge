@@ -29,6 +29,7 @@ android {
             )
         }
     }
+    packaging { resources.excludes.add("META-INF/*") }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -58,6 +59,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //Test
+    implementation(libs.mockk)
+    implementation(libs.coroutines.test)
+    implementation(libs.core.test)
+    implementation(libs.turbine)
 
     //Hilt
     implementation(libs.hilt.android)

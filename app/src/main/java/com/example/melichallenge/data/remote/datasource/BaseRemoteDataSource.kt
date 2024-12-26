@@ -17,7 +17,7 @@ abstract class BaseRemoteDataSource {
         } catch (e : Exception){
             return if (e is UnknownHostException)
                 Resource.error("No internet connection")
-            else Resource.error("Network Call Error: $e")
+            else Resource.error("Network Call Error: ${e.message.orEmpty()}")
         }
 
     }
